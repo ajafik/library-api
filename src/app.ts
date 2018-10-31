@@ -1,12 +1,19 @@
 import * as express from "express";
 import * as bodyParser from "body-parser"; //used to parse the form data that you pass in the request
+const API_VERSION = '/v1';
+
+import {LibraryRoutes} from './routes/library';
 
 class App {
     public app: express.Application;
 
+    public libraryRoutes: LibraryRoutes = new LibraryRoutes();
+
     constructor() {
         this.app = express();
         this.config();
+
+        this.libraryRoutes.routes(this.app);
     }
 
     private config(): void {

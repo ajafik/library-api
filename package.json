@@ -30,8 +30,10 @@
     "typescript": "^3.1.4"
   },
   "dependencies": {
+    "@types/redis": "^2.8.7",
     "body-parser": "^1.18.3",
     "dotenv": "^6.1.0",
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "redis": "^2.8.0"
   }
 }

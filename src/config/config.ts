@@ -15,4 +15,11 @@ export class Config {
         return {RABBIT_HOST,RABBIT_PORT,  RABBIT_USERNAME, RABBIT_PASSWORD};
 
     }
+
+    Elasticsearch():any{
+        const ELASTIC_HOST = process.env.ELASTIC_HOST || "localhost";
+        const ELASTIC_PORT = process.env.ELASTIC_PORT || 9200;
+
+        return {ELASTIC_HOST, ELASTIC_PORT};
+    }
 }

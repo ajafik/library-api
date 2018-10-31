@@ -32,6 +32,7 @@
   "dependencies": {
     "@types/amqplib": "^0.5.9",
     "@types/elasticsearch": "^5.0.28",
+    "@types/mongoose": "^5.2.22",
     "@types/redis": "^2.8.7",
     "amqplib": "^0.5.2",
     "bluebird": "^3.5.2",
@@ -39,6 +40,7 @@
     "dotenv": "^6.1.0",
     "elasticsearch": "^15.2.0",
     "express": "^4.16.4",
+    "mongoose": "^5.3.8",
     "redis": "^2.8.0"
   }
 }

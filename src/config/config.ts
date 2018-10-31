@@ -25,7 +25,7 @@ export class Config {
 
     MongoDB(): any {
         const MONGO_HOST = process.env.MONGO_HOST || "localhost";
-        const MONGO_PORT = process.env.MONGO_PORT || 1990;
+        const MONGO_PORT = process.env.MONGO_PORT || 27017;
         const MONGO_DB_NAME = process.env.MONGO_DB_NAME || "library";
         const MONGO_USERNAME = process.env.MONGO_USERNAME || "user";
         const MONGO_PASSWORD = process.env.MONGO_PASSWORD || "pass";

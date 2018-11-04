@@ -1,60 +1,62 @@
-import * as elasticsearch from 'elasticsearch';
+import * as elasticsearch from "elasticsearch";
 import { Config } from "../config/config";
 
 export class Elasticsearch {
-    ELASTIC_PORT: number;
-    ELASTIC_HOST: string;
+    public ELASTIC_PORT: number;
+    public ELASTIC_HOST: string;
 
-    client: any;
+    public client: any;
 
-    config = new Config();
+    public config = new Config();
     constructor() {
         this.ELASTIC_PORT = this.config.Elasticsearch().ELASTIC_PORT;
         this.ELASTIC_HOST = this.config.Elasticsearch().ELASTIC_HOST;
 
-        this.client = new elasticsearch.Client({ host: this.ELASTIC_HOST + ':' + this.ELASTIC_PORT });
+        this.client = new elasticsearch.Client({ host: this.ELASTIC_HOST + ":" + this.ELASTIC_PORT });
     }
 
-    isESUp() {
+    public isESUp() {
         return new Promise((resolve, reject) => {
-            this.client.ping({ requestTimeout: 30000 }).then((res) => console.log(res)).catch((error) => console.log(error));
+            this.client
+            .ping({ requestTimeout: 30000 })
+            .then((res) => res).catch((error) => error);
         });
     }
 
-    createIndex(index_name) { //Creates an Index (DB) on Elasticsearch
+    public createIndex(indexName) { // Creates an Index (DB) on Elasticsearch
         return new Promise((resolve, reject) => {
             this.client.indices.create({
-                index: index_name
+                index: indexName,
             }).then((error, response, status) => {
                 if (error) {
                     reject(0);
                 } else {
                     resolve(status);
                 }
-            })
+            });
         });
     }
 
-    deleteIndex(index_name) {
+    public deleteIndex(indexName) {
         return new Promise((resolve, reject) => {
             this.client.indices.delete({
-                index: index_name
+                index: indexName,
             }).then((error, response, status) => {
                 if (error) {
                     reject(0);
                 } else {
                     resolve(response);
                 }
-            })
+            });
         });
     }
 
-    mapType(index_name, type_name, body) {
+    public mapType(indexName, typeName, body) {
         return new Promise((resolve, reject) => {
             this.client.indices.putMapping({
-                index: index_name,
-                type: type_name,
-                body: body
+                body,
+                index: indexName,
+                type: typeName,
             }).then((errror, response) => {
                 if (errror) {
                     reject(errror);
@@ -63,13 +65,13 @@ export class Elasticsearch {
         });
     }
 
-    addData(index_name, type_name, id, data) {
+    public addData(indexName, typeName, id, data) {
         return new Promise((resolve, reject) => {
             this.client.index({
-                index: index_name,
-                id: id,
-                type: type_name,
-                body: data
+                body: data,
+                id,
+                index: indexName,
+                type: typeName,
             }).then((error, resp, status) => {
                 if (error) {
                     reject(0);
@@ -81,17 +83,16 @@ export class Elasticsearch {
 
     }
 
-    aSearch(index_name, type_name, query) {
+    public aSearch(indexName, typeName, query) {
         return new Promise((resolve, reject) => {
             this.client.search({
-                index: index_name,
-                type: type_name,
-                body: query
+                body: query,
+                index: indexName,
+                type: typeName,
             }, (error, response, status) => {
                 if (error) {
                     reject(error);
-                }
-                else {
+                } else {
                     resolve(response);
 
                 }
@@ -99,77 +100,70 @@ export class Elasticsearch {
         });
     }
 
-    deleteData(index_name, type_name, id) {
+    public deleteData(indexName, typeName, id) {
         return new Promise((resolve, reject) => {
             this.client.delete({
-                index: index_name,
-                id: id,
-                type: type_name,
-                ignore: [404]
+                id,
+                ignore: [404],
+                index: indexName,
+                type: typeName,
             }, (err, resp, status) => {
-                if (err) { reject(0); }
-                else { resolve(1); }
+                if (err) { reject(0); } else { resolve(1); }
             });
         });
     }
 
-    countAllData(index_name, type_name) {
+    public countAllData(indexName, typeName) {
         return new Promise((resolve, reject) => {
-            this.client.count({ index: index_name, type: type_name }, (err, resp, status) => {
+            this.client.count({ index: indexName, type: typeName }, (err, resp, status) => {
                 if (err) {
                     reject(0);
-                }
-                else {
-                    resolve(resp['count']);
+                } else {
+                    resolve(resp.count);
                 }
             });
         });
     }
 
-    getMapping(index_name, type_name) {
+    public getMapping(indexName, typeName) {
         return new Promise((resolve, reject) => {
             this.client.indices.getMapping({
-                index: index_name,
-                type: type_name,
+                index: indexName,
+                type: typeName,
             },
                 (error, response) => {
-                    if (error) { reject(error.message); }
-                    else { resolve(response); }
+                    if (error) { reject(error.message); } else { resolve(response); }
                 });
         });
     }
 
-
-    matchSearch(index_name, type_name, match_pair) {
+    public matchSearch(indexName, typeName, matchPair) {
         return new Promise((resolve, reject) => {
             this.client.search({
-                index: index_name,
-                type: type_name,
                 body: {
-                    query: { match: match_pair },
-                }
+                    query: { match: matchPair },
+                },
+                index: indexName,
+                type: typeName,
             }, (error, response, status) => {
-                if (error) { reject(error); }
-                else { resolve(response); }
+                if (error) { reject(error); } else { resolve(response); }
             });
         });
     }
 
-
-    countAllDBData() {
+    public countAllDBData() {
         return new Promise((resolve, reject) => {
             this.client.count((error, response, status) => {
-                if (error) { reject(0); }
-                else { resolve(response.count); }
+                if (error) { reject(0); } else { resolve(response.count); }
             });
         });
     }
 
-    count_by_query(index_name, query) {
+    public count_by_query(indexName, query) {
         return new Promise((resolve, reject) => {
             this.client.count({
-                index: index_name,
-                body: query
+                body: query,
+                index: indexName,
             }, (err, response) => {
                 if (response) {
                     resolve(response);
@@ -180,25 +174,25 @@ export class Elasticsearch {
         });
     }
 
-    update_data(index_name, type_name, _id, data) {
+    public update_data(indexName, typeName, id, data) {
         return new Promise((resolve, reject) => {
             this.client.update({
-                index: index_name, type: type_name, id: _id,
-                body: { doc: data }
+                body: { doc: data },
+                id,
+                index: indexName, type: typeName,
             }, (error, response) => {
-                if (error) { reject(0); }
-                else { resolve(1); }
+                if (error) { reject(0); } else { resolve(1); }
             });
         });
     }
 
-    is_data_exist(index_name, type_name, _id) {
+    public is_data_exist(indexName, typeName, id) {
         return new Promise((resolve, reject) => {
 
             this.client.exists({
-                index: index_name,
-                type: type_name,
-                id: _id
+                id,
+                index: indexName,
+                type: typeName,
             }, (error, exists) => {
                 if (exists === true) {
                     resolve(1);

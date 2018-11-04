@@ -1,14 +1,14 @@
-import * as mongoose from 'mongoose';
+import * as mongoose from "mongoose";
 
-import { Config } from './config/config';
+import { Config } from "./config/config";
 
 export class DB {
 
-    MONGO_HOST: string;
-    MONGO_PORT: number;
-    MONGO_DB_NAME: string;
-    MONGO_USERNAME: string;
-    MONGO_PASSWORD: string;
+    public MONGO_HOST: string;
+    public MONGO_PORT: number;
+    public MONGO_DB_NAME: string;
+    public MONGO_USERNAME: string;
+    public MONGO_PASSWORD: string;
 
     constructor() {
         const config = new Config();
@@ -19,9 +19,10 @@ export class DB {
         this.MONGO_PASSWORD = config.MongoDB().MONGO_PASSWORD;
     }
 
-    connect() {
-        const url = `mongodb://${this.MONGO_USERNAME}:${this.MONGO_PASSWORD}@${this.MONGO_HOST}:${this.MONGO_PORT}/${this.MONGO_DB_NAME}`;
+    public connect() {
+        const url = `mongodb://${this.MONGO_USERNAME}
+                    :${this.MONGO_PASSWORD}@${this.MONGO_HOST}:${this.MONGO_PORT}/${this.MONGO_DB_NAME}`;
         mongoose.connect(url, { useNewUrlParser: true });
-        console.log("Connected to MongoDB Successfully.");
+        // console.log("Connected to MongoDB Successfully.");
     }
 }

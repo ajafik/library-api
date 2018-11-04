@@ -7,7 +7,7 @@ export class Elasticsearch {
 
     public client: any;
 
-    public config = new Config();
+    private config = new Config();
     constructor() {
         this.ELASTIC_PORT = this.config.Elasticsearch().ELASTIC_PORT;
         this.ELASTIC_HOST = this.config.Elasticsearch().ELASTIC_HOST;
@@ -18,8 +18,8 @@ export class Elasticsearch {
     public isESUp() {
         return new Promise((resolve, reject) => {
             this.client
-            .ping({ requestTimeout: 30000 })
-            .then((res) => res).catch((error) => error);
+                .ping({ requestTimeout: 30000 })
+                .then((res) => res).catch((error) => error);
         });
     }
 

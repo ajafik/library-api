@@ -20,9 +20,8 @@ export class DB {
     }
 
     public connect() {
-        const url = `mongodb://${this.MONGO_USERNAME}
-                    :${this.MONGO_PASSWORD}@${this.MONGO_HOST}:${this.MONGO_PORT}/${this.MONGO_DB_NAME}`;
+        // tslint:disable-next-line:max-line-length
+        const url = `mongodb://${this.MONGO_USERNAME}:${this.MONGO_PASSWORD}@${this.MONGO_HOST}:${this.MONGO_PORT}/${this.MONGO_DB_NAME}`;
         mongoose.connect(url, { useNewUrlParser: true });
-        // console.log("Connected to MongoDB Successfully.");
     }
 }

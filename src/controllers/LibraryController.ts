@@ -30,14 +30,16 @@ export class LibraryController {
     lib
       .save()
       .then((response) => {
+
         const queueData = {
-          data : response,
+          data: response,
           meta: {
             key: response._id,
             module: "library",
             operation: "add",
           },
         };
+
         rabbitMQ
           .rabbit_send(QUEUE_NAME, JSON.stringify(queueData))
           .then((rabbitStatus) => {
@@ -61,16 +63,68 @@ export class LibraryController {
   public deleteById(req: Request, res: Response) {
     Library.findByIdAndDelete(req.params.id)
       .then((response) => {
-        res.status(200).send(responsesHelper.success(200, response));
+
+        const id = req.params.id;
+        const queueData = {
+          data: response,
+          meta: {
+            key: id,
+            module: "library",
+            operation: "delete",
+          },
+        };
+
+        rabbitMQ
+          .rabbit_send(QUEUE_NAME, JSON.stringify(queueData))
+          .then((rabbitStatus) => {
+            res.status(200).send(responsesHelper.success(200, response));
+          })
+          .catch((rabbitError) => {
+            res
+              .status(200)
+              .send(
+                responsesHelper.error(
+                  200,
+                  `Success Deleting from Source of TRUTH. RabbitMQ Error => ${rabbitError}`,
+                ),
+              );
+          });
+
       })
       .catch((error) => {
         res.status(500).send(responsesHelper.error(500, error));
       });
   }
   public updateById(req: Request, res: Response) {
-    Library.findByIdAndUpdate(req.params.id, req.body)
+    const id = req.params.id;
+    const data = req.body;
+
+    const queueData = {
+      data,
+      meta: {
+        key: id,
+        module: "library",
+        operation: "update",
+      },
+    };
+
+    Library.findByIdAndUpdate(id, data)
       .then((response) => {
-        res.status(200).send(responsesHelper.success(200, req.body));
+        rabbitMQ
+          .rabbit_send(QUEUE_NAME, JSON.stringify(queueData))
+          .then((rabbitStatus) => {
+            res.status(200).send(responsesHelper.success(200, req.body));
+          })
+          .catch((rabbitError) => {
+            res
+              .status(200)
+              .send(
+                responsesHelper.error(
+                  200,
+                  `Success Updating Source of TRUTH. RabbitMQ Error => ${rabbitError}`,
+                ),
+              );
+          });
       })
       .catch((error) => {
         res.status(500).send(responsesHelper.error(500, error));

@@ -25,11 +25,13 @@ export class LibraryController {
 
   public Add(req: Request, res: Response) {
     const lib = new Library(req.body);
-    lib.save().then((response) => {
-      res.status(200).send(responsesHelper.success(200, response));
-    }).then((error) => {
-      res.status(500).send(responsesHelper.error(500, error));
-    });
+    lib.save()
+      .then((response) => {
+        res.status(200).send(responsesHelper.success(200, response));
+      })
+      .catch((error) => {
+        res.status(500).send(responsesHelper.error(500, error.errors));
+      });
   }
   public deleteById(req: Request, res: Response) {
     Library.findByIdAndDelete(req.params.id)

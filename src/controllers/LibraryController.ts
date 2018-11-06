@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
+import { rabbitMQ } from "../libs/RabbitMQ";
 import { responsesHelper } from "../libs/Responses";
 import { Library } from "../models/schemas/Library";
+const QUEUE_NAME = "library_data_operations";
 
 export class LibraryController {
   public getAll(req: Request, res: Response) {
@@ -25,9 +27,32 @@ export class LibraryController {
 
   public Add(req: Request, res: Response) {
     const lib = new Library(req.body);
-    lib.save()
+    lib
+      .save()
       .then((response) => {
-        res.status(200).send(responsesHelper.success(200, response));
+        const queueData = {
+          data : response,
+          meta: {
+            key: response._id,
+            module: "library",
+            operation: "add",
+          },
+        };
+        rabbitMQ
+          .rabbit_send(QUEUE_NAME, JSON.stringify(queueData))
+          .then((rabbitStatus) => {
+            res.status(201).send(responsesHelper.success(201, response));
+          })
+          .catch((rabbitError) => {
+            res
+              .status(200)
+              .send(
+                responsesHelper.error(
+                  200,
+                  `Success Saving to Source of TRUTH. RabbitMQ Error => ${rabbitError}`,
+                ),
+              );
+          });
       })
       .catch((error) => {
         res.status(500).send(responsesHelper.error(500, error.errors));

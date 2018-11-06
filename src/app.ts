@@ -4,18 +4,14 @@ import * as morgan from "morgan";
 import {Logger} from "./middleware/logger";
 const API_VERSION = "/v1";
 
-import {LibraryRoutes} from "./routes/library";
+import {libraryRoutes} from "./routes/LibraryRoutes";
 
 class App {
     public app: express.Application;
 
-    public libraryRoutes: LibraryRoutes = new LibraryRoutes();
-
     constructor() {
         this.app = express();
         this.config();
-
-        this.libraryRoutes.routes(this.app);
     }
 
     private config(): void {
@@ -26,6 +22,9 @@ class App {
         this.app.use(bodyParser.urlencoded({
             extended: false,
         }));
+
+        // Routing
+        this.app.use(API_VERSION, libraryRoutes);
 
     }
 
